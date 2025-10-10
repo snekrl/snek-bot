@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits, PermissionsBitField } = require('discord.js');
-const { token, snekId } = require("./config.json");
+const { token, snekId } = require('./config.json');
 
-const MEE6 = '159985415099514880';   // MEE6 USER ID       
+const MEE6 = '159985415099514880'; // MEE6 USER ID
 
 const client = new Client({
   intents: [
@@ -10,42 +10,34 @@ const client = new Client({
   ],
 });
 
-
 async function banTargetIfPresent(guild) {
   try {
-    const member = await guild.members.fetch(MEE6).catch(() => null);
-    if (!member) return;
-    if (!member.bannable) {
-      console.log(`[${guild.name}] ${member.user.tag} higher role or no permission to nuke`);
+    const member = await guild.members.fetch(MEE6, { force: true }).catch(() => null);
+
+    if (!member) {
+      console.log(`[${guild.name}] mee6 not found`);
       return;
     }
-    await member.ban({ reason: 'nuked mee6' });
-    console.log(`[${guild.name}] NUKED ${member.user.tag} (${member.id})`);
+
+    if (!member.bannable) {
+      console.log(`[${guild.name}] mee6 found but cant nuke`);
+      return;
+    }
+
+    await member.ban({ reason: 'auto nuke mee6' });
+    console.log(`[${guild.name}] nuked ${member.user.tag}`);
   } catch (err) {
-    console.error(`[${guild.name}] cant nuke:`, err);
+    console.error(`[${guild.name}] error when nuking`, err);
   }
 }
 
-client.once('clientReady', async () => {
-  console.log(`logged ${client.user.tag}`);
+client.once('ready', async () => {
+  console.log(`logged in as ${client.user.tag}`);
 
   for (const [, guild] of client.guilds.cache) {
-    console.log(`check ${guild.name}...`);
-    const member = await guild.members.fetch(MEE6).catch(() => null);
-    if (!member) {
-      console.log('mee6 not here');
-      continue;
-    }
-
-    if (!member.bannable) {
-      console.log('cant nuke mee6');
-      continue;
-    }
-
-    await member.ban({ reason: 'Auto-ban test' });
-    console.log(`nuked ${member.user.tag} in ${guild.name}`);
+    console.log(`scan server - ${guild.name} (${guild.id})`);
+    await banTargetIfPresent(guild); // call the async function here
   }
 });
-
 
 client.login(token);
