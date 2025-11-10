@@ -2,12 +2,12 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
 require('dotenv').config();
 
-const apiKey = process.env.R6_API_KEY;
+const apiKey = process.env.TRACKER_API_KEY;
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('r6stats')
-    .setDescription('Check Rainbow Six Siege player stats')
+    .setDescription('Check Rainbow Six Siege player stats using Tracker.gg')
     .addStringOption(option =>
       option.setName('username')
         .setDescription('The player username')
@@ -31,33 +31,38 @@ module.exports = {
     await interaction.deferReply();
 
     try {
-      const res = await axios.get(`https://api2.r6stats.com/public-api/stats/${username}/${platform}/general`, {
-        headers: { Authorization: apiKey },
+      const url = `https://public-api.tracker.gg/v2/r6siege/standard/profile/${platform}/${encodeURIComponent(username)}`;
+      const res = await axios.get(url, {
+        headers: { 'TRN-Api-Key': apiKey }
       });
 
-      const data = res.data;
-      const stats = data.stats.general;
+      const data = res.data.data;
+      const stats = data.segments.find(s => s.type === 'overview')?.stats;
+
+      if (!stats) {
+        await interaction.editReply('No stats found for that player.');
+        return;
+      }
 
       const embed = new EmbedBuilder()
-        .setTitle(`${data.player.username}'s R6 Stats`)
-        .setThumbnail(data.player.avatar_url)
+        .setTitle(`${data.platformInfo.platformUserHandle}'s R6 Siege Stats`)
+        .setThumbnail(data.platformInfo.avatarUrl)
         .addFields(
-          { name: 'Level', value: `${data.player.progression.level}`, inline: true },
-          { name: 'K/D Ratio', value: `${stats.kd.toFixed(2)}`, inline: true },
-          { name: 'Win %', value: `${(stats.winloss * 100).toFixed(1)}%`, inline: true },
-          { name: 'Kills', value: `${stats.kills}`, inline: true },
-          { name: 'Deaths', value: `${stats.deaths}`, inline: true },
-          { name: 'Wins', value: `${stats.wins}`, inline: true },
-          { name: 'Losses', value: `${stats.losses}`, inline: true }
+          { name: 'Level', value: stats.level?.displayValue ?? 'N/A', inline: true },
+          { name: 'Kills', value: stats.kills?.displayValue ?? 'N/A', inline: true },
+          { name: 'Deaths', value: stats.deaths?.displayValue ?? 'N/A', inline: true },
+          { name: 'K/D Ratio', value: stats.kdRatio?.displayValue ?? 'N/A', inline: true },
+          { name: 'Win %', value: stats.wlPercentage?.displayValue ?? 'N/A', inline: true },
+          { name: 'Matches Played', value: stats.matchesPlayed?.displayValue ?? 'N/A', inline: true }
         )
         .setColor(0x00AEFF)
-        .setFooter({ text: 'Data provided by R6Stats API' });
+        .setFooter({ text: 'Data provided by Tracker.gg API' });
 
       await interaction.editReply({ embeds: [embed] });
 
     } catch (error) {
       console.error(error.response?.data || error);
-      await interaction.editReply('❌ Could not find that player or fetch stats.');
+      await interaction.editReply('Could not find that player or fetch stats.');
     }
   },
 };
