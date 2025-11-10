@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const { token, snekId } = require('./config.json');
 require('dotenv').config();
+console.log('Tracker API Key:', process.env.TRACKER_API_KEY);
+
 
 const apiKey = process.env.R6_API_KEY;
 const MEE6 = '159985415099514880';

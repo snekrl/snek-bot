@@ -33,7 +33,7 @@ module.exports = {
     try {
       const url = `https://public-api.tracker.gg/v2/r6siege/standard/profile/${platform}/${encodeURIComponent(username)}`;
       const res = await axios.get(url, {
-        headers: { 'TRN-Api-Key': apiKey }
+        headers: { 'TRN-Api-Key': process.env.TRACKER_API_KEY }
       });
 
       const data = res.data.data;
