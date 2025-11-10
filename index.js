@@ -29,7 +29,8 @@ const rest = new REST({ version: '10' }).setToken(token);
 (async () => {
   try {
     console.log('Registering slash commands...');
-    await rest.put(Routes.applicationCommands(snekId), { body: commands });
+    const guildId = '1178369590565285908';
+    await rest.put(Routes.applicationGuildCommands(snekId, guildId), { body: commands });
     console.log('Slash commands registered.');
   } catch (err) {
     console.error('Error registering commands:', err);
@@ -49,7 +50,7 @@ async function banTargetIfPresent(guild) {
   }
 }
 
-client.once('ready', async () => {
+client.once('clientReady', async () => {
   console.log(`Logged in as ${client.user.tag}`);
   for (const [, guild] of client.guilds.cache) {
     console.log(`Scanning server - ${guild.name}`);
