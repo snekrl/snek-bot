@@ -22,11 +22,9 @@ function getRankFromRP(rankPoints) {
   // Champion has no sub-tier
   if (tier.name === 'Champion') return { name: 'Champion', color: tier.color };
 
-  // Calculate sub-tier using 100 RP per sub-tier
   const tierProgress = rankPoints - tier.min;
   let subTierNumber = 5 - Math.floor(tierProgress / 100);
 
-  // Clamp between 1 and 5
   if (subTierNumber < 1) subTierNumber = 1;
   if (subTierNumber > 5) subTierNumber = 5;
 
@@ -39,14 +37,19 @@ module.exports = {
     .setDescription('Look up a user\'s Rainbow Six Siege Ranked stats')
     .addStringOption(option =>
       option.setName('platform')
-        .setDescription('PC, Xbox, or PSN')
-        .setRequired(true))
+        .setDescription('Select the platform')
+        .setRequired(true)
+        .addChoices(
+          { name: 'PC', value: 'pc' },
+          { name: 'Xbox', value: 'xbox' },
+          { name: 'PlayStation', value: 'psn' }
+        ))
     .addStringOption(option =>
       option.setName('username')
         .setDescription('R6 username')
         .setRequired(true)),
   async execute(interaction) {
-    const platform = interaction.options.getString('platform').toLowerCase();
+    const platform = interaction.options.getString('platform'); // guaranteed valid choice
     const username = interaction.options.getString('username');
 
     const apiUrl = `http://localhost:3000/r6/${encodeURIComponent(platform)}/${encodeURIComponent(username)}`;
