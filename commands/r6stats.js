@@ -1,68 +1,67 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
-require('dotenv').config();
-
-const apiKey = process.env.TRACKER_API_KEY;
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('r6stats')
-    .setDescription('Check Rainbow Six Siege player stats using Tracker.gg')
-    .addStringOption(option =>
-      option.setName('username')
-        .setDescription('The player username')
-        .setRequired(true)
-    )
+    .setName('r6')
+    .setDescription('Fetch Rainbow Six Siege stats (Ranked + Casual)')
     .addStringOption(option =>
       option.setName('platform')
-        .setDescription('The platform (uplay, psn, xbox)')
-        .setRequired(true)
-        .addChoices(
-          { name: 'PC (uplay)', value: 'uplay' },
-          { name: 'PlayStation', value: 'psn' },
-          { name: 'Xbox', value: 'xbl' }
-        )
-    ),
-
+        .setDescription('PC, Xbox, or PSN')
+        .setRequired(true))
+    .addStringOption(option =>
+      option.setName('username')
+        .setDescription('R6 username')
+        .setRequired(true)),
   async execute(interaction) {
+    const platform = interaction.options.getString('platform').toLowerCase();
     const username = interaction.options.getString('username');
-    const platform = interaction.options.getString('platform');
 
-    await interaction.deferReply();
+    const apiUrl = `http://localhost:3000/r6/${encodeURIComponent(platform)}/${encodeURIComponent(username)}`;
 
     try {
-      const url = `https://public-api.tracker.gg/v2/r6siege/standard/profile/${platform}/${encodeURIComponent(username)}`;
-      const res = await axios.get(url, {
-        headers: { 'TRN-Api-Key': process.env.TRACKER_API_KEY }
-      });
+      const { data } = await axios.get(apiUrl);
 
-      const data = res.data.data;
-      const stats = data.segments.find(s => s.type === 'overview')?.stats;
-
-      if (!stats) {
-        await interaction.editReply('No stats found for that player.');
-        return;
+      if (!data.ranked && !data.standard) {
+        return interaction.reply({ content: 'No stats found for this player.', ephemeral: true });
       }
 
       const embed = new EmbedBuilder()
-        .setTitle(`${data.platformInfo.platformUserHandle}'s R6 Siege Stats`)
-        .setThumbnail(data.platformInfo.avatarUrl)
-        .addFields(
-          { name: 'Level', value: stats.level?.displayValue ?? 'N/A', inline: true },
-          { name: 'Kills', value: stats.kills?.displayValue ?? 'N/A', inline: true },
-          { name: 'Deaths', value: stats.deaths?.displayValue ?? 'N/A', inline: true },
-          { name: 'K/D Ratio', value: stats.kdRatio?.displayValue ?? 'N/A', inline: true },
-          { name: 'Win %', value: stats.wlPercentage?.displayValue ?? 'N/A', inline: true },
-          { name: 'Matches Played', value: stats.matchesPlayed?.displayValue ?? 'N/A', inline: true }
-        )
-        .setColor(0x00AEFF)
-        .setFooter({ text: 'Data provided by Tracker.gg API' });
+        .setTitle(`${data.username} - ${data.platform.toUpperCase()} Stats`)
+        .setColor(0x1F8B4C);
 
-      await interaction.editReply({ embeds: [embed] });
+      // Add Ranked stats if available
+      if (data.ranked) {
+        embed.addFields(
+          { name: '--- Ranked ---', value: '\u200B' },
+          { name: 'Rank', value: `${data.ranked.rank} (${data.ranked.rankPoints} pts)`, inline: true },
+          { name: 'Wins', value: `${data.ranked.wins}`, inline: true },
+          { name: 'Losses', value: `${data.ranked.losses}`, inline: true },
+          { name: 'Kills', value: `${data.ranked.kills}`, inline: true },
+          { name: 'Deaths', value: `${data.ranked.deaths}`, inline: true },
+          { name: 'KD', value: `${data.ranked.kd}`, inline: true },
+          { name: 'Matches Played', value: `${data.ranked.matchesPlayed}`, inline: true }
+        );
+      }
 
+      // Add Casual/Standard stats if available
+      if (data.standard) {
+        embed.addFields(
+          { name: '\u200B', value: '\u200B' },
+          { name: '--- Casual ---', value: '\u200B' },
+          { name: 'Wins', value: `${data.standard.wins}`, inline: true },
+          { name: 'Losses', value: `${data.standard.losses}`, inline: true },
+          { name: 'Kills', value: `${data.standard.kills}`, inline: true },
+          { name: 'Deaths', value: `${data.standard.deaths}`, inline: true },
+          { name: 'KD', value: `${data.standard.kd}`, inline: true },
+          { name: 'Matches Played', value: `${data.standard.matchesPlayed}`, inline: true }
+        );
+      }
+
+      await interaction.reply({ embeds: [embed] });
     } catch (error) {
-      console.error(error.response?.data || error);
-      await interaction.editReply('Could not find that player or fetch stats.');
+      console.error(`Error fetching R6 stats:`, error.message);
+      await interaction.reply({ content: 'Could not fetch stats. Make sure the username and platform are correct.', ephemeral: true });
     }
-  },
+  }
 };
