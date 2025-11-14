@@ -6,7 +6,7 @@ const rankTiers = [
   { name: 'Bronze', min: 1500, max: 1999, color: 0xCD7F32, image: 'https://multiboosting.com/app/plugins/multiboosting-calculator-plugin/public/images/rainbowsix/bronze-v.png' },
   { name: 'Silver', min: 2000, max: 2499, color: 0xC0C0C0, image: 'https://cdn3.emoji.gg/emojis/54401-silver.png' },
   { name: 'Gold', min: 2500, max: 2999, color: 0xFFD700, image: 'https://staticctf.akamaized.net/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5o6FA0tOweqf2RMm6ly9ET/5cf7d4ce0465315dfa4012a6a84c428a/R6S_RANK_500x500_GOLD_03.png' },
-  { name: 'Platinum', min: 3000, max: 3499, color: 0x00BFFF, image: 'https://cdn3.emoji.gg/emojis/93489-rainbowsixsigeplatinum.png' },
+  { name: 'Platinum', min: 3000, max: 3499, color: 0x76E3E3, image: 'https://cdn3.emoji.gg/emojis/93489-rainbowsixsigeplatinum.png' },
   { name: 'Emerald', min: 3500, max: 3999, color: 0x00FF7F, image: 'https://cdn3.emoji.gg/emojis/94972-emerald.png' },
   { name: 'Diamond', min: 4000, max: 4499, color: 0xBB72EC, image: 'https://res.cloudinary.com/dv0epbifo/image/upload/v1698687347/guessmyrank_2023-10-30_23_03/rainbow6siege/diamond-min_epcnbm_qttyfm.png' },
   { name: 'Champion', min: 4500, max: Infinity, color: 0xFF1493, image: 'https://tiermaker.com/images/templates/y8s3-r6-tier-list-16019296/160192961691966922.webp' }
