@@ -33,7 +33,7 @@ function getRankFromRP(rankPoints) {
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('r6')
+    .setName('r6stats')
     .setDescription('Look up a user\'s Rainbow Six Siege Ranked stats')
     .addStringOption(option =>
       option.setName('platform')
@@ -80,7 +80,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error(`Error fetching R6 stats:`, error.message);
-      await interaction.reply({ content: 'Could not fetch stats. Make sure the username and platform are correct.', ephemeral: true });
+      await interaction.reply({ content: 'Could not find stats. Make sure the username and platform are correct.', ephemeral: true });
     }
   }
 };
