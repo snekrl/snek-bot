@@ -3,14 +3,14 @@ const axios = require('axios');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('r6')
-    .setDescription('Fetch Rainbow Six Siege stats (Ranked + Casual)')
+    .setName('R6 stat check')
+    .setDescription('Look up a users Rainbow Six Siege stats (Ranked + Casual)')
     .addStringOption(option =>
-      option.setName('platform')
+      option.setName('Platform')
         .setDescription('PC, Xbox, or PSN')
         .setRequired(true))
     .addStringOption(option =>
-      option.setName('username')
+      option.setName('Username')
         .setDescription('R6 username')
         .setRequired(true)),
   async execute(interaction) {
@@ -33,8 +33,8 @@ module.exports = {
       // Add Ranked stats if available
       if (data.ranked) {
         embed.addFields(
-          { name: '--- Ranked ---', value: '\u200B' },
-          { name: 'Rank', value: `${data.ranked.rank} (${data.ranked.rankPoints} pts)`, inline: true },
+          { name: 'Ranked Stats', value: '\u200B' },
+          { name: 'Rank', value: `(${data.ranked.rankPoints} Ranked Points)`, inline: true },
           { name: 'Wins', value: `${data.ranked.wins}`, inline: true },
           { name: 'Losses', value: `${data.ranked.losses}`, inline: true },
           { name: 'Kills', value: `${data.ranked.kills}`, inline: true },
