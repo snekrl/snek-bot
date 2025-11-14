@@ -2,10 +2,10 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
 
 const rankTiers = [
-  { name: 'Copper', min: 1000, max: 1499, color: 0x8B4513, image: 'https://images.steamusercontent.com/ugc/841456395999215394/B0D34F0C4D396AE99C3F85DD15EB817B6DCA2BAE/' },
-  { name: 'Bronze', min: 1500, max: 1999, color: 0xCD7F32, image: 'https://images.steamusercontent.com/ugc/841456395999233459/271102C5056250F915081B5EF2C63FD9300D1EAF/' },
-  { name: 'Silver', min: 2000, max: 2499, color: 0xC0C0C0, image: 'https://images.steamusercontent.com/ugc/841456396001970717/5B858B173069F53988BD7083596A150ACA0F455B/' },
-  { name: 'Gold', min: 2500, max: 2999, color: 0xFFD700, image: 'https://images.steamusercontent.com/ugc/841456395999241843/7BD2790858A0D7DC728490219FE93CD2DDAA58FF/' },
+  { name: 'Copper', min: 1000, max: 1499, color: 0x8B4513, image: 'https://trackercdn.com/cdn/r6.tracker.network/ranks/svg/s15/hd-rank5.svg' },
+  { name: 'Bronze', min: 1500, max: 1999, color: 0xCD7F32, image: 'https://multiboosting.com/app/plugins/multiboosting-calculator-plugin/public/images/rainbowsix/bronze-v.png' },
+  { name: 'Silver', min: 2000, max: 2499, color: 0xC0C0C0, image: 'https://cdn3.emoji.gg/emojis/54401-silver.png' },
+  { name: 'Gold', min: 2500, max: 2999, color: 0xFFD700, image: 'https://staticctf.akamaized.net/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5o6FA0tOweqf2RMm6ly9ET/5cf7d4ce0465315dfa4012a6a84c428a/R6S_RANK_500x500_GOLD_03.png' },
   { name: 'Platinum', min: 3000, max: 3499, color: 0x00BFFF, image: 'https://cdn3.emoji.gg/emojis/93489-rainbowsixsigeplatinum.png' },
   { name: 'Emerald', min: 3500, max: 3999, color: 0x00FF7F, image: 'https://cdn3.emoji.gg/emojis/94972-emerald.png' },
   { name: 'Diamond', min: 4000, max: 4499, color: 0xBB72EC, image: 'https://res.cloudinary.com/dv0epbifo/image/upload/v1698687347/guessmyrank_2023-10-30_23_03/rainbow6siege/diamond-min_epcnbm_qttyfm.png' },
