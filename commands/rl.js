@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const axios = require('axios');
 
+// RL ranks with RP ranges, colors, and images
 const rlRanks = [
   { name: 'Bronze', min: 0, max: 599, color: 0xCD7F32, image: 'bronze.png' },
   { name: 'Silver', min: 600, max: 1199, color: 0xC0C0C0, image: 'silver.png' },
@@ -12,8 +13,21 @@ const rlRanks = [
   { name: 'Supersonic Legend', min: 4200, max: Infinity, color: 0x00FFFF, image: 'ssl.png' }
 ];
 
+// Convert RP to rank + sub-tier
 function getRLRank(rp) {
-  return rlRanks.find(r => rp >= r.min && rp <= r.max) || { name: 'Unranked', color: 0x808080, image: null };
+  const tier = rlRanks.find(r => rp >= r.min && rp <= r.max);
+  if (!tier) return { name: 'Unranked', color: 0x808080, image: null };
+
+  // Supersonic Legend has no sub-tier
+  if (tier.name === 'Supersonic Legend') return { name: tier.name, color: tier.color, image: tier.image };
+
+  const tierRange = tier.max - tier.min + 1;
+  const tierProgress = rp - tier.min;
+
+  // Divide tier into 4 sub-tiers
+  let subTier = Math.floor((tierProgress / tierRange) * 4) + 1;
+  if (subTier > 4) subTier = 4;
+  return { name: `${tier.name} ${subTier}`, color: tier.color, image: tier.image };
 }
 
 module.exports = {
@@ -40,6 +54,8 @@ module.exports = {
 
     try {
       const { data } = await axios.get(apiUrl);
+      if (!data.rankPoints) return interaction.reply({ content: 'No stats found for this player.', ephemeral: true });
+
       const rankInfo = getRLRank(data.rankPoints);
 
       const embed = new EmbedBuilder()
