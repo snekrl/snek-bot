@@ -1,6 +1,6 @@
 # Snek bot
 
-snek bot is here, for now can do some simple r6 stat commands n leaderboards with the api proxy I made
+Snek bot is a Discord bot that fetches player stats and manages private leaderboards. The bot interacts with a separate R6 API repository to fetch live in game stats.
 
 ## Features
 
