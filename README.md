@@ -1,7 +1,5 @@
 # Snek bot
 
-## Description
-
 snek bot is here, for now can do some simple r6 stat commands n leaderboards with the api proxy I made
 
 ## Features
