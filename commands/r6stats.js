@@ -25,7 +25,7 @@ function getRankFromRP(rankPoints) {
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('r6')
+    .setName('r6stats')
     .setDescription('Look up a user\'s Rainbow Six Siege Ranked stats')
     .addStringOption(option =>
       option.setName('platform')
